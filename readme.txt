@@ -26,8 +26,7 @@ Feel free to post your feature requests, issues and pull requests to [Plugin Act
 
 == Screenshots ==
 
-1. Ticket sales table
-2. Attendee registration form
+1. The "Last Activated" column in the plugins dashboard screen
 
 == Changelog ==
 
