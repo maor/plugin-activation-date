@@ -2,7 +2,7 @@
 /*
  * Plugin Name: Plugin Activation Date
  * Plugin URI: http://wordpress.org/
- * Description: Shows when each plugin was last activated. Useful in instances that deal with many plugins.
+ * Description: Shows when each plugin was last activated. Useful in instances where many plugins are installed.
  * Version: 1.0
  * Author: Maor Chasen
  * Author URI: http://maorchasen.com
