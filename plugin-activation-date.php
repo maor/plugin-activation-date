@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: Plugin Activation Date
- * Plugin URI: http://wordpress.org/
+ * Plugin URI: http://wordpress.org/extend/plugins/plugin-activation-date/
  * Description: Shows when each plugin was last activated. Useful in instances where many plugins are installed.
  * Version: 1.0
  * Author: Maor Chasen
@@ -70,8 +70,6 @@ class Plugin_Activation_Date {
 	 * Output the date when this plugin was last activated. Repeats for all plugins.
 	 */
 	public function activated_columns( $column_name, $plugin_file, $plugin_data ) {
-		global $status;
-
 		$current_plugin = &$this->options[ $plugin_file ];
 
 		switch ( $column_name ) {
@@ -119,6 +117,7 @@ class Plugin_Activation_Date {
 
 	public function activation() {
 		add_option( 'pad_activated_plugins' );
+		add_option( 'pad_display_relative_date' );
 	}
 }
 
