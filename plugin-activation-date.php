@@ -15,7 +15,6 @@
  * Main plugin wrapper.
  *
  * @since  1.0
- * @todo make column sortable using WP_List_Table's built in sorting method
  * @todo support multisite
  */
 class Plugin_Activation_Date {
@@ -39,12 +38,14 @@ class Plugin_Activation_Date {
 	 */
 	public function __construct() {
 		// Register essential hooks. Pay special attention to {activate/deactivate}_plugin.
-		add_filter( 'admin_init' , 					array( $this, 'register_settings_field' ) );
-		add_filter( 'manage_plugins_columns', 		array( $this, 'plugins_columns' ) );
-		add_action( 'activate_plugin', 				array( $this, 'pad_plugin_status_changed' ) );
-		add_action( 'deactivate_plugin', 			array( $this, 'pad_plugin_status_changed' ) );
-		add_action( 'admin_head-plugins.php', 		array( $this, 'column_css_styles' ) );
-		add_action( 'manage_plugins_custom_column', array( $this, 'activated_columns' ), 10, 3 );
+		add_filter( 'admin_init',                      array( $this, 'register_settings_field' ) );
+		add_filter( 'manage_plugins_columns',          array( $this, 'plugins_columns' ) );
+		add_filter( 'manage_plugins_sortable_columns', array( $this, 'sortable_columns' ) );
+		add_filter( 'all_plugins',                     array( $this, 'filter_all_plugins' ) );
+		add_action( 'activate_plugin',                 array( $this, 'pad_plugin_status_changed' ) );
+		add_action( 'deactivate_plugin',               array( $this, 'pad_plugin_status_changed' ) );
+		add_action( 'admin_head-plugins.php',          array( $this, 'column_css_styles' ) );
+		add_action( 'manage_plugins_custom_column',    array( $this, 'activated_columns' ), 10, 3 );
 
 		// Get them options, and keep around for later use
 		$this->options = get_option( 'pad_activated_plugins', array() );
@@ -52,6 +53,33 @@ class Plugin_Activation_Date {
 		load_plugin_textdomain( 'padate', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 		// Runs on activation only
 		register_activation_hook( __FILE__, array( $this, 'activation' ) );
+	}
+
+	/**
+	 * Add the last activated/deactivate data to all plugins.
+	 *
+	 * This allows for sorting on the manage plugins screen.
+	 *
+	 * @param array $plugins All plugins.
+	 *
+	 * @return array
+	 */
+	public function filter_all_plugins( $plugins ) {
+		$options = get_option( 'pad_activated_plugins', array() );
+
+		$plugin_files = array_keys( $plugins );
+
+		foreach ( $plugin_files as &$plugin ) {
+
+			$plugins[ $plugin ]['Last_activated_date'] = '';
+			$plugins[ $plugin ]['Last_deactivated_date'] = '';
+
+			if ( isset( $options[ $plugin ] ) ) {
+				$plugins[ $plugin ][ 'Last_' . $options[ $plugin ]['status'] . '_date' ] = $options[ $plugin ]['timestamp'];
+			}
+		}
+
+		return $plugins;
 	}
 
 	/**
@@ -71,7 +99,7 @@ class Plugin_Activation_Date {
 
 	/**
 	 * Sets up the column headings.
-	 * 
+	 *
 	 * @since 1.0
 	 * @uses   $status Indicates on which plugin screen we are currently
 	 * @param  array $columns All of the columns for the plugins page
@@ -88,6 +116,24 @@ class Plugin_Activation_Date {
 				$columns['last_deactivated_date'] = __( 'Last Deactivated', 'padate' );
 
 		return $columns;
+	}
+
+	/**
+	 * Filter the list table sortable columns.
+	 *
+	 * @param array $sortable_columns An array of sortable columns.
+	 * @return array
+	 */
+	public function sortable_columns( $sortable_columns ) {
+
+		if ( ! isset( $sortable_columns['name'] ) ) {
+			$sortable_columns['name'] = array( 'name', false );
+		}
+
+		$sortable_columns['last_activated_date']   = array( 'last_activated_date', true );
+		$sortable_columns['last_deactivated_date'] = array( 'last_deactivated_date', true );
+
+		return $sortable_columns;
 	}
 
 	/**
@@ -163,12 +209,12 @@ class Plugin_Activation_Date {
 	public function column_css_styles() {
 		?>
 		<style>#last_activated_date, #last_deactivated_date { width: 18%; }</style>
-		<?php
+	<?php
 	}
 
 	/**
 	 * Runs on activation, registers a few options for this plugin to operate.
-	 * 
+	 *
 	 * @since 1.0
 	 * @uses add_option()
 	 */
