@@ -1,5 +1,5 @@
 === Plugin Activation Date ===
-Contributors: maor
+Contributors: maor, swissspidy
 Tags: plugins, plugin info
 Requires at least: 3.0
 Tested up to: 3.4.2
@@ -7,14 +7,15 @@ Stable tag: 1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Keep track of plugins you activate or deactivate through the dashboard by viewing when each and every one of them was enabled or disabled.
+Keep track of plugin activations and deactivations in your dashboard.
 
 == Description ==
 
 Current features:
 
 * Adds a new column on the plugins dashboard screen that shows when each plugin was activated, only if PAD was installed before
-* Control whether you'd like to see a relative date or a "regular" date as set under Settings > General
+* Sort the plugins by their respective activation date
+* Control whether you'd like to see a relative date or an absolute date as set under Settings > General
 
 While by default the date & time settings are being used, you can always change the date format by filtering 'pad_date_time_format'. For instance:
 
@@ -42,6 +43,9 @@ Feel free to post your feature requests, issues and pull requests to [Plugin Act
 1. The "Last Activated" column in the plugins dashboard screen
 
 == Changelog ==
+
+= 1.2 =
+* Allow for column sorting
 
 = 1.1 =
 * Code optimization and documentation fixes
